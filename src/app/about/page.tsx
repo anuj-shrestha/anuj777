@@ -32,12 +32,11 @@ export default function AboutPage() {
           <Link href="https://www.youtube.com/@ShiaSupertramp" target="_blank" rel="noopener noreferrer">
             YouTube
           </Link>
-          ), build small games in Unity, and run a small restaurant out of my home in Buddhanagar with my wife,
-          Sandhya. Our daughter Reeva was born in April 2026.
+          ), and build small games in Unity.
         </p>
         <p>
           On the side I&apos;m building Nova, a personal AI that runs my Notion + Slack life, and a course-generation
-          platform with my colleague Abidit.
+          platform.
         </p>
 
         <h2>How I work</h2>

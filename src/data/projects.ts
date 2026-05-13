@@ -40,7 +40,7 @@ The interesting frontend problems here are not glamorous. They are: making code 
     status: "ongoing",
     tags: ["React", "TypeScript", "Canvas", "Editor", "Storytelling"],
     link: { label: "visnoeditor.com", href: "https://visnoeditor.com" },
-    body: `VisnoEditor is a personal project I'm deeply proud of — a browser-based editor for writing and visualising stories as connected nodes rather than linear documents.
+    body: `Visual Story Editor AI is a personal project I'm deeply proud of — a browser-based editor for writing and visualising stories as connected nodes rather than linear documents.
 
 The core idea is that stories branch. Choices, consequences, parallel threads — these are hard to hold in a text file or a linear doc. Visno gives writers a canvas where narrative structure is first-class: nodes are scenes, edges are transitions, and the whole graph is the story.
 
