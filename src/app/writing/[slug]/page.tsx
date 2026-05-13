@@ -1,14 +1,19 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { essays } from "@/data/writing";
+import ExternalRedirect from "./ExternalRedirect";
+import Link from "next/link";
 
 export function generateStaticParams() {
-  return essays.filter((e) => !e.url).map((e) => ({ slug: e.slug }));
+  return essays.map((e) => ({ slug: e.slug }));
 }
 
 export default function EssayDetail({ params }: { params: { slug: string } }) {
   const e = essays.find((x) => x.slug === params.slug);
   if (!e) return notFound();
+
+  if (e.url) {
+    return <ExternalRedirect url={e.url} />;
+  }
 
   const paras = (e.body ?? "").split(/\n\n+/);
 
