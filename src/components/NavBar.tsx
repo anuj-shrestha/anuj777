@@ -20,7 +20,7 @@ export default function NavBar() {
           href="/"
           className="font-serif text-lg tracking-tight text-ink-900 no-underline hover:text-terra-600"
         >
-          Anuj <span className="text-terra-500">·</span> 777
+          Anuj,
         </Link>
         <nav className="flex items-center gap-x-5 text-sm">
           {links.slice(1).map((l) => {

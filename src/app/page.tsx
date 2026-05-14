@@ -38,27 +38,52 @@ export default function Home() {
             </div>
           </div>
           <div className="col-span-7 flex flex-col justify-end pb-1">
-            <h1 className="font-serif font-light text-[clamp(2rem,7vw,4.75rem)] leading-[0.9] tracking-tight text-ink-900">
-              Anuj<br />Shrestha.
+            <h1 className="font-serif font-light text-[clamp(2rem,7vw,4.75rem)] leading-[0.9] tracking-[-0.02em] text-ink-900">
+              Anuj<br />Shrestha<span className="text-terra-500">.</span>
             </h1>
             <p className="font-serif italic font-light text-[clamp(1.125rem,3vw,2rem)] text-ink-500 leading-[1.05] mt-3">
-              Engineer,<br className="sm:hidden" /> songwriter, maker.
+              <span className="not-italic text-terra-400 mr-1.5">—</span>Engineer,<br className="sm:hidden" /> songwriter, maker.
             </p>
           </div>
         </div>
 
         {/* Bio — portrait stands on top of this */}
-        <p className="text-ink-700 text-lg leading-relaxed max-w-prose">
-          {profile.pitch}
+        <p className="text-ink-700 text-[1.0625rem] leading-[1.7] max-w-prose">
+          I build interactive software — editors, log viewers, learning tools,
+          UI systems — with ~8 years on React and a frontend-heavy fullstack
+          background. I&apos;m the creator of{" "}
+          <em className="text-ink-900 not-italic font-medium">Visual Story Editor AI</em>{" "}
+          (
+          <a
+            href="https://visnoeditor.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-ink-900 underline decoration-terra-400 decoration-1 underline-offset-[3px] hover:decoration-terra-600 transition-colors"
+          >
+            visnoeditor.com
+          </a>
+          ), a personal project I&apos;m deeply proud of. Before code I trained
+          as a civil engineer. Outside code I write songs (Nepali, Hindi,
+          English) and make small games in Unity.
         </p>
 
-        {/* Colophon — inline prose, replaces stat grid */}
-        <p className="mt-6 text-sm text-ink-500 max-w-prose leading-relaxed">
-          Lead engineer at <span className="text-ink-800">Parewa Labs (Programiz)</span>.
-          Creator of <span className="text-ink-800">Visual Story Editor AI</span>.
-          Previously <span className="text-ink-800">Leapfrog Technology</span>.
-          Around <span className="text-ink-800">eight years</span> on React.
-        </p>
+        {/* Colophon — structured two-column with mono labels */}
+        <dl className="mt-8 max-w-prose grid grid-cols-[5rem_1fr] gap-x-4 gap-y-2 text-sm">
+          <dt className="font-mono text-[10px] uppercase tracking-[0.25em] text-ink-400 pt-[3px]">Recent</dt>
+          <dd className="text-ink-800">
+            Lead engineer at Parewa Labs <span className="text-ink-500">(Programiz)</span>
+          </dd>
+          <dt className="font-mono text-[10px] uppercase tracking-[0.25em] text-ink-400 pt-[3px]">Side</dt>
+          <dd className="text-ink-800">
+            Creator of <em className="not-italic font-medium">Visual Story Editor AI</em>
+          </dd>
+          <dt className="font-mono text-[10px] uppercase tracking-[0.25em] text-ink-400 pt-[3px]">Past</dt>
+          <dd className="text-ink-800">
+            Leapfrog Technology <span className="text-ink-500">· six years</span>
+          </dd>
+          <dt className="font-mono text-[10px] uppercase tracking-[0.25em] text-ink-400 pt-[3px]">React</dt>
+          <dd className="text-ink-800">~ eight years</dd>
+        </dl>
       </section>
 
       {/* Featured projects */}
