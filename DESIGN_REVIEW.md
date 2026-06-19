@@ -82,7 +82,7 @@ Option A — Go big:
 Option B — Go dense:
   Compress the hero into a typographic card, think colophon
   All four stat items become inline prose: "Lead engineer at Parewa Labs.
-  8 years React. Civil engineer before that. 12 songs, three languages."
+  8 years React. Civil engineer before that. 12+ songs, three languages."
   No labels, no grid, just a paragraph that reads like a business card note
 ```
 

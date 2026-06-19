@@ -10,7 +10,7 @@ export default function SongsPage() {
       <header className="mb-8">
         <h1 className="font-serif text-4xl tracking-tight text-ink-900">Songs</h1>
         <p className="text-ink-600 mt-2 max-w-prose leading-relaxed">
-          I&apos;ve written 12 songs across Nepali, Hindi, and English. Themes: love, longing,
+          I&apos;ve written 12+ songs across Nepali, Hindi, and English. Themes: love, longing,
           self-reliance, social justice, bilingual storytelling.
         </p>
         <div className="mt-4 text-sm">

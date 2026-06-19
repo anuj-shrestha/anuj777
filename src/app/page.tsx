@@ -115,7 +115,7 @@ export default function Home() {
           </div>
         </header>
         <p className="text-ink-600 max-w-prose mb-3">
-          12 songs across Nepali, Hindi, and English. Bilingual storytelling is its own craft — I keep
+          12+ songs across Nepali, Hindi, and English. Bilingual storytelling is its own craft — I keep
           working at it. Most of the catalog lives on my YouTube channel.
         </p>
         <div className="border-t border-cream-300/60">

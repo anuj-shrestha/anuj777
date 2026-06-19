@@ -32,6 +32,53 @@ My work has spanned units across the product family — including the Access, PR
 The interesting frontend problems here are not glamorous. They are: making code editors feel responsive on a low-end laptop in a low-bandwidth context, making error messages actually teach the learner something, making the difference between a 90ms and a 250ms interaction visible in retention. I care about that work because the user on the other end is usually someone learning to program for the first time, and the UI is most of the teacher.`,
   },
   {
+    slug: "simple-video-gen",
+    title: "Simple Video Gen",
+    tagline: "A browser-based lyrics video generator built to simplify music visualizer creation.",
+    role: "Solo — personal project",
+    year: "2025 — 2026",
+    status: "shipped",
+    tags: ["React", "TypeScript", "Web Audio API", "Canvas", "Video Export"],
+    link: { label: "simplevideogen.com", href: "https://www.simplevideogen.com/" },
+    body: `Simple Video Gen was born out of personal frustration: there wasn't a simple, free, browser-based tool to generate clean lyrics videos without paywalls or mandatory logins. As a songwriter myself, I wanted a fast way to turn an audio track and text into an engaging video.
+
+The tool operates entirely on the client side. Users upload an MP3 file, paste their lyrics, align the timestamps with the audio timeline, choose a background layout or animation style, and render the final MP4.
+
+Handling media encoding and canvas animation loop synchronization entirely in the user's browser presented unique challenges. The focus was on keeping the timeline interaction intuitive and the rendering pipeline stable without requiring a beefy GPU or high-speed upload bandwidth.`,
+  },
+  {
+    slug: "grow-slow-idle-adventure",
+    title: "Grow Slow Idle Adventure",
+    tagline: "An idle adventure mobile game featuring a snail explorer, published on the Google Play Store.",
+    role: "Solo — Unity / C#",
+    year: "2026",
+    status: "shipped",
+    tags: ["Unity", "C#", "Android", "Mobile Game", "Shaders", "Gacha Systems"],
+    links: [
+      { label: "Play Store", href: "https://play.google.com/store/apps/details?id=com.grow_slow_idle_adventure" }
+    ],
+    body: `Grow Slow Idle Adventure is a mobile idle game I developed and published on the Google Play Store. Players guide a cute snail explorer through a lush fantasy forest, acquiring equipment, leveling up skills, and battling whimsical enemies.
+
+Behind the casual idle loop lies a robust set of systems: a dynamic equipment gacha progression with scaling drop rates, a custom script-based visual debugging framework for hitboxes and skill ranges, a treadmill joystick controller mode, and custom-written mobile shaders optimized to prevent particle jitter.
+
+Building it allowed me to dive deep back into Unity and C#, scaling game mechanics, handling persistent saving/progression on mobile devices, and managing the publishing pipeline on Google Play.`,
+  },
+  {
+    slug: "nelipi",
+    title: "Nelipi",
+    tagline: "An educational mobile app for learning the historic Newari (Nepal Lipi) script.",
+    role: "Collaborative — with Sanjay",
+    year: "2025",
+    status: "shipped",
+    tags: ["React Native", "Android", "Education", "Script Learning"],
+    links: [
+      { label: "Play Store", href: "https://play.google.com/store/apps/details?id=com.nelipi&pcampaignid=web_share" }
+    ],
+    body: `Nelipi is an educational mobile application built in collaboration with Sanjay Mhj, aimed at teaching the Nepal Lipi (Newa/Newari) writing system. The script, historically used in the Nepal Mandala region by the indigenous Newar people, is preserved through interactive character tracing and vocabulary lessons.
+
+The app guides users through learning the alphabet, practicing writing strokes directly on the screen, and exploring rich examples of words using the script. We wanted to build something highly accessible, lightweight, and focused purely on cultural preservation and learning.`,
+  },
+  {
     slug: "visno-editor",
     title: "Visual Story Editor AI",
     tagline: "A visual story editor for building interactive, node-based narratives in the browser.",
@@ -74,4 +121,4 @@ The pattern is more useful than the code itself: a typed message bridge between 
   },
 ];
 
-export const featuredSlugs = ["programiz", "visno-editor", "shootemall"];
+export const featuredSlugs = ["programiz", "visno-editor", "simple-video-gen", "grow-slow-idle-adventure"];
