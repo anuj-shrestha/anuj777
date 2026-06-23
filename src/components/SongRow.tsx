@@ -14,18 +14,26 @@ function getVideoId(url: string): string | null {
 }
 
 export default function SongRow({ s }: { s: Song }) {
-  const { playing: playingTitle, play, stop } = useSongPlayer();
+  const { playing: playingTitle, play, stop, hovered, setHovered } = useSongPlayer();
   const playing = playingTitle === s.title;
+  const isHovered = hovered === s.title;
   const href = s.url ?? channelUrl;
   const videoId = s.url ? getVideoId(s.url) : null;
 
   return (
-    <div className="py-4 border-b border-cream-300/60">
+    <div
+      onClick={() => playing ? stop() : play(s.title)}
+      onMouseEnter={() => setHovered(s.title)}
+      onMouseLeave={() => setHovered(null)}
+      className={`py-4 border-b border-cream-300/60 transition-all duration-300 px-2 rounded-lg cursor-pointer ${
+        isHovered ? "bg-terra-50/75 border-l-4 border-l-terra-500 pl-3 translate-x-1" : ""
+      }`}
+    >
       <div className="flex items-baseline justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3">
           {videoId && (
             <button
-              onClick={() => playing ? stop() : play(s.title)}
+              onClick={(e) => { e.stopPropagation(); playing ? stop() : play(s.title); }}
               aria-label={playing ? "Stop" : "Play"}
               className="w-7 h-7 flex items-center justify-center rounded-full border border-cream-300 text-terra-600 hover:bg-terra-50 transition-colors shrink-0"
             >
@@ -48,6 +56,7 @@ export default function SongRow({ s }: { s: Song }) {
             href={href}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
             className="font-serif text-lg tracking-tight text-ink-900 hover:text-terra-600 transition-colors no-underline"
           >
             {s.title}

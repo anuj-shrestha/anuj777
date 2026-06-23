@@ -8,7 +8,6 @@ import { songs } from "@/data/songs";
 // Animation States
 type AnimState =
   | "IDLE_EMPTY"          // Platter is empty, arm is at rest
-  | "UNLOAD_NEEDLE"       // Lift needle off the platter
   | "UNLOAD_ROBOT_SWING"  // Swing robot arm to platter, lower grabber
   | "UNLOAD_LIFT"         // Lift record off platter
   | "UNLOAD_MOVE_STACK"   // Move record to vinyl stack position
@@ -17,7 +16,6 @@ type AnimState =
   | "LOAD_LIFT"           // Lift chosen record off stack
   | "LOAD_MOVE_PLATTER"   // Move record to platter position
   | "LOAD_LOWER"          // Lower record onto platter, release
-  | "LOAD_NEEDLE"         // Move playback needle onto record
   | "PLAYING";            // Record is spinning on platter, playing
 
 const stackColorPalettes = [
@@ -33,15 +31,11 @@ export default function ThreeVinyl() {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { playing, play, stop } = useSongPlayer();
-  const [hoveredSong, setHoveredSong] = useState<string | null>(null);
 
   // Position Definitions
   const platterPos = new THREE.Vector3(-0.8, 0.12, -0.2);
   const stackPos = new THREE.Vector3(1.1, 0.06, 0.0); // Side Stack
   const robotBasePos = new THREE.Vector3(0.0, 0.08, -1.0);
-  const needleBasePos = new THREE.Vector3(-1.4, 0.08, 0.8);
-
-  const shippedSongs = songs.filter((s) => s.status === "shipped");
 
   // State reference to share data with Three.js rendering loop
   const stateRef = useRef({
@@ -65,13 +59,13 @@ export default function ThreeVinyl() {
         current.stateTimer = 0;
       } else if (current.animState === "PLAYING" && current.activeSongTitle !== playing) {
         // Change song: eject current first
-        current.animState = "UNLOAD_NEEDLE";
+        current.animState = "UNLOAD_ROBOT_SWING";
         current.stateTimer = 0;
       }
     } else {
       current.targetSongTitle = "";
-      if (current.animState === "PLAYING" || current.animState === "LOAD_NEEDLE") {
-        current.animState = "UNLOAD_NEEDLE";
+      if (current.animState === "PLAYING") {
+        current.animState = "UNLOAD_ROBOT_SWING";
         current.stateTimer = 0;
       }
     }
@@ -115,7 +109,7 @@ export default function ThreeVinyl() {
     scene.fog = new THREE.FogExp2(0xfdfcf7, 0.05);
 
     // --- Camera ---
-    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
+    const camera = new THREE.PerspectiveCamera(48, width / height, 0.1, 100); // Zoomed out FOV = 48
     camera.position.set(0, 5.5, 3.6);
     camera.lookAt(0, -0.2, 0.0);
 
@@ -303,35 +297,9 @@ export default function ThreeVinyl() {
       stackVinyls.push(stackVinyl);
     }
 
-    // --- Tonearm (Playback needle) ---
-    const tonearmGroup = new THREE.Group();
-    tonearmGroup.position.copy(needleBasePos);
-    playerGroup.add(tonearmGroup);
-
-    const armBaseGeo = new THREE.CylinderGeometry(0.12, 0.12, 0.16, 12);
-    const armBaseMat = new THREE.MeshStandardMaterial({ color: 0x27272a, metalness: 0.6 });
-    const armBase = new THREE.Mesh(armBaseGeo, armBaseMat);
-    armBase.position.y = 0.08;
-    tonearmGroup.add(armBase);
-
-    const armRodGeo = new THREE.CylinderGeometry(0.02, 0.02, 1.4, 8);
-    armRodGeo.rotateX(Math.PI / 2);
-    armRodGeo.translate(0, 0, 0.7); // Pivot from back
-    const rodMat = new THREE.MeshStandardMaterial({ color: 0xd4d4d8, metalness: 0.9, roughness: 0.1 });
-    const armRod = new THREE.Mesh(armRodGeo, rodMat);
-    armRod.position.y = 0.18;
-    tonearmGroup.add(armRod);
-
-    const cartridgeGeo = new THREE.BoxGeometry(0.1, 0.06, 0.16);
-    const cartridgeMat = new THREE.MeshStandardMaterial({ color: 0xe05a47 });
-    const cartridge = new THREE.Mesh(cartridgeGeo, cartridgeMat);
-    cartridge.position.set(0, 0.18, 1.4);
-    tonearmGroup.add(cartridge);
-
-    tonearmGroup.rotation.y = -0.5;
-
     // --- Robot Loader Arm ---
     const robotGroup = new THREE.Group();
+    const armBaseMat = new THREE.MeshStandardMaterial({ color: 0x27272a, metalness: 0.6 });
     robotGroup.position.copy(robotBasePos);
     playerGroup.add(robotGroup);
 
@@ -472,28 +440,14 @@ export default function ThreeVinyl() {
       // --- Loader Animation State Machine ---
       let robotTargetRotY = 0.0;
       let robotTargetHeight = 0.32;
-      let needleTargetRotY = -0.5;
 
       const progress = Math.min(state.stateTimer / 0.8, 1.0); // 0.8s duration
 
       switch (state.animState) {
         case "IDLE_EMPTY":
           robotTargetRotY = 0.0;
-          needleTargetRotY = -0.5;
           state.platterRecordVisible = false;
           state.transitRecordVisible = false;
-          break;
-
-        case "UNLOAD_NEEDLE":
-          needleTargetRotY = -0.5 + (0.35 - -0.5) * (1 - progress);
-          robotTargetRotY = 0.0;
-          state.platterRecordVisible = true;
-          state.transitRecordVisible = false;
-          if (progress >= 1.0) {
-            state.animState = "UNLOAD_ROBOT_SWING";
-            state.stateTimer = 0;
-            playChime(220, "triangle", 0.08);
-          }
           break;
 
         case "UNLOAD_ROBOT_SWING":
@@ -632,23 +586,10 @@ export default function ThreeVinyl() {
           if (progress >= 1.0) {
             state.platterRecordVisible = true;
             state.transitRecordVisible = false;
-            state.animState = "LOAD_NEEDLE";
+            state.animState = "PLAYING"; // Transition directly to playing!
             state.stateTimer = 0;
             playChime(392, "triangle", 0.12);
-          }
-          break;
-
-        case "LOAD_NEEDLE":
-          robotTargetRotY = Math.atan2(platterPos.x - robotBasePos.x, platterPos.z - robotBasePos.z) * (1 - progress);
-          robotTargetHeight = 0.21 + 0.11 * progress;
-          needleTargetRotY = -0.5 + (0.35 - -0.5) * progress;
-
-          state.platterRecordVisible = true;
-          state.transitRecordVisible = false;
-
-          if (progress >= 1.0) {
-            state.animState = "PLAYING";
-            state.stateTimer = 0;
+            // Chord chimes
             setTimeout(() => playChime(261.63, "triangle", 0.18), 0);
             setTimeout(() => playChime(329.63, "triangle", 0.18), 100);
             setTimeout(() => playChime(392.00, "triangle", 0.18), 200);
@@ -657,7 +598,6 @@ export default function ThreeVinyl() {
 
         case "PLAYING":
           robotTargetRotY = 0.0;
-          needleTargetRotY = 0.35;
           state.platterRecordVisible = true;
           state.transitRecordVisible = false;
 
@@ -678,7 +618,9 @@ export default function ThreeVinyl() {
 
       robotGroup.rotation.y += (robotTargetRotY - robotGroup.rotation.y) * 0.15;
       loaderBoom.position.y += (robotTargetHeight - loaderBoom.position.y) * 0.15;
-      tonearmGroup.rotation.y += (needleTargetRotY - tonearmGroup.rotation.y) * 0.15;
+
+      platterRecord.visible = state.platterRecordVisible;
+      transitRecord.visible = state.transitRecordVisible;
 
       renderer.render(scene, camera);
     };
@@ -722,12 +664,6 @@ export default function ThreeVinyl() {
       iconMat.dispose();
       stopButtonPlungerMat.dispose();
       stopIconGeo.dispose();
-      armBaseGeo.dispose();
-      armBaseMat.dispose();
-      armRodGeo.dispose();
-      rodMat.dispose();
-      cartridgeGeo.dispose();
-      cartridgeMat.dispose();
       robotBaseGeo.dispose();
       loaderBoomGeo.dispose();
       loaderBoomMat.dispose();
@@ -754,144 +690,6 @@ export default function ThreeVinyl() {
             "Select Record & Play"
           )}
         </div>
-      </div>
-
-      {/* Crate Digger Shelf: Vertically stacked records below */}
-      <div className="flex flex-col gap-2">
-        <header className="flex items-baseline justify-between px-1">
-          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-400">Record Rack</span>
-          <span className="text-xs text-ink-500 italic">Select record to play</span>
-        </header>
-
-        {/* Crate bin container */}
-        <div className="flex gap-4 p-4 overflow-x-auto scrollbar-thin scrollbar-thumb-cream-300 scrollbar-track-transparent rounded-xl bg-cream-50/50 border border-cream-200/60 shadow-inner">
-          {shippedSongs.map((s, idx) => {
-            const isCurrent = playing === s.title;
-            const isHovered = hoveredSong === s.title;
-            const colorObj = stackColorPalettes[idx % stackColorPalettes.length];
-
-            return (
-              <div
-                key={s.title}
-                onClick={() => isCurrent ? stop() : play(s.title)}
-                onMouseEnter={() => setHoveredSong(s.title)}
-                onMouseLeave={() => setHoveredSong(null)}
-                className="group relative flex flex-col items-center cursor-pointer shrink-0 py-2"
-                style={{ width: "96px" }}
-              >
-                {/* Vinyl Slip-out animation */}
-                <div
-                  className={`absolute w-20 h-20 rounded-full bg-zinc-950 border border-zinc-800 shadow-lg flex items-center justify-center transition-all duration-300 ease-out z-0`}
-                  style={{
-                    transform: isCurrent 
-                      ? "translateY(-48px) rotate(180deg)" 
-                      : isHovered 
-                      ? "translateY(-24px) rotate(45deg)" 
-                      : "translateY(0px) rotate(0deg)",
-                  }}
-                >
-                  <div className={`w-8 h-8 rounded-full ${colorObj.twBg} border border-zinc-800 flex items-center justify-center`}>
-                    <div className="w-1.5 h-1.5 rounded-full bg-zinc-950" />
-                  </div>
-                </div>
-
-                {/* Cardboard Sleeve */}
-                <div
-                  className={`relative w-24 h-24 rounded shadow-md border ${colorObj.twBg} ${colorObj.text} flex flex-col justify-between p-2.5 z-10 transition-transform duration-300 ease-out`}
-                  style={{
-                    transform: isCurrent || isHovered ? "scale(1.05)" : "scale(1.0)",
-                  }}
-                >
-                  <div className="flex justify-between items-start">
-                    <span className="font-mono text-[7px] font-bold uppercase opacity-80 leading-none">
-                      LP #{idx + 1}
-                    </span>
-                    <span className="font-mono text-[7px] font-bold opacity-80 leading-none">
-                      {s.language.slice(0, 3)}
-                    </span>
-                  </div>
-
-                  <div className="flex-1 flex items-center justify-center">
-                    <p className="font-serif font-bold text-[9px] tracking-tight leading-[1.1] text-center select-none line-clamp-3">
-                      {s.title}
-                    </p>
-                  </div>
-
-                  <div className="border-t border-current/25 pt-1 flex items-center justify-between">
-                    <span className="text-[6px] font-mono tracking-wider opacity-60">SHIA SUPERTRAMP</span>
-                    {isCurrent && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                    )}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Dynamic Song Window below canvas showing playing/hovered song info */}
-      <div className="rounded-xl border border-cream-200 bg-cream-50/50 p-5 shadow-sm min-h-[130px] flex flex-col justify-between transition-all duration-300">
-        {hoveredSong ? (
-          <div>
-            {(() => {
-              const hSongObj = shippedSongs.find((s) => s.title === hoveredSong);
-              if (!hSongObj) return null;
-              return (
-                <>
-                  <div className="flex justify-between items-baseline mb-2">
-                    <h3 className="font-serif text-lg tracking-tight text-ink-900">
-                      🔍 Inspecting: <span className="font-medium text-terra-600">{hSongObj.title}</span>
-                    </h3>
-                    <span className="font-mono text-[9px] uppercase tracking-widest text-ink-400">
-                      {hSongObj.language}
-                    </span>
-                  </div>
-                  <p className="text-sm text-ink-600 leading-relaxed mb-1">
-                    <span className="font-mono text-[10px] uppercase text-ink-400 mr-2">Theme:</span>
-                    {hSongObj.theme}
-                  </p>
-                  {hSongObj.about && (
-                    <p className="text-xs text-ink-500 italic">{hSongObj.about}</p>
-                  )}
-                </>
-              );
-            })()}
-          </div>
-        ) : playing ? (
-          <div>
-            <div className="flex justify-between items-baseline mb-2">
-              <h3 className="font-serif text-lg tracking-tight text-ink-900">
-                💿 Playing: <span className="font-medium text-terra-600">{playing}</span>
-              </h3>
-              <span className="font-mono text-[9px] uppercase tracking-widest text-ink-400">
-                {shippedSongs.find(s => s.title === playing)?.language || "Bilingual"}
-              </span>
-            </div>
-            <p className="text-sm text-ink-600 leading-relaxed mb-1">
-              <span className="font-mono text-[10px] uppercase text-ink-400 mr-2">Theme:</span>
-              {shippedSongs.find(s => s.title === playing)?.theme}
-            </p>
-            {shippedSongs.find(s => s.title === playing)?.about && (
-              <p className="text-xs text-ink-500 italic">
-                {shippedSongs.find(s => s.title === playing)?.about}
-              </p>
-            )}
-            <button
-              onClick={() => stop()}
-              className="mt-3 font-mono text-[10px] uppercase tracking-wider text-terra-600 hover:text-terra-700 font-bold"
-            >
-              Stop & Eject Record
-            </button>
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center h-full text-center py-4">
-            <span className="text-2xl mb-1.5 opacity-60">📦</span>
-            <p className="font-serif italic text-ink-500 text-sm">
-              Hover over a record inside the bin below to inspect, click to load it onto the turntable.
-            </p>
-          </div>
-        )}
       </div>
     </div>
   );
