@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { profile } from "@/data/profile";
+
+export const metadata: Metadata = {
+  title: "About",
+  description: "Learn more about Anuj Shrestha, a civil-engineer-turned-software-engineer, songwriter, and maker based in Kathmandu, Nepal.",
+};
 
 export default function AboutPage() {
   return (

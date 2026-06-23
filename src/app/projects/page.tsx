@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import { projects } from "@/data/projects";
 import ProjectCard from "@/components/ProjectCard";
+
+export const metadata: Metadata = {
+  title: "Projects",
+  description: "Browse the selected engineering work, software applications, side projects, and Unity games built by Anuj Shrestha.",
+};
 
 export default function ProjectsPage() {
   return (

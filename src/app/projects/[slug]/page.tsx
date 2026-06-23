@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { projects } from "@/data/projects";
@@ -6,14 +7,53 @@ export function generateStaticParams() {
   return projects.map((p) => ({ slug: p.slug }));
 }
 
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const p = projects.find((x) => x.slug === params.slug);
+  if (!p) return {};
+  return {
+    title: p.title,
+    description: p.tagline,
+    openGraph: {
+      title: `${p.title} | Anuj Shrestha`,
+      description: p.tagline,
+      type: "article",
+      url: `https://anuj-shrestha.github.io/projects/${p.slug}`,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${p.title} | Anuj Shrestha`,
+      description: p.tagline,
+    },
+  };
+}
+
 export default function ProjectDetail({ params }: { params: { slug: string } }) {
   const p = projects.find((x) => x.slug === params.slug);
   if (!p) return notFound();
 
   const paras = p.body.split(/\n\n+/);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    "name": p.title,
+    "headline": p.title,
+    "description": p.tagline,
+    "creator": {
+      "@type": "Person",
+      "name": "Anuj Shrestha",
+      "url": "https://anuj-shrestha.github.io"
+    },
+    "keywords": p.tags.join(", "),
+    "url": p.link?.href ?? p.repo?.href ?? `https://anuj-shrestha.github.io/projects/${p.slug}`
+  };
+
   return (
     <article>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Link href="/projects" className="text-sm text-ink-500 hover:text-terra-600 no-underline">
         ← All projects
       </Link>

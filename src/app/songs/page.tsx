@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { songs, channelUrl, channelName } from "@/data/songs";
 import SongRow from "@/components/SongRow";
+
+export const metadata: Metadata = {
+  title: "Songs",
+  description: "Explore bilingual songwriting catalog of Anuj Shrestha featuring Nepali, Hindi, and English songs with themes of storytelling and social justice.",
+};
 
 export default function SongsPage() {
   const shipped = songs.filter((s) => s.status === "shipped");

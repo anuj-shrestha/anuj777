@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { essays } from "@/data/writing";
+
+export const metadata: Metadata = {
+  title: "Writing",
+  description: "Read essays, notes, and stories about software engineering, career transitions, and building personal projects by Anuj Shrestha.",
+};
 
 export default function WritingPage() {
   return (

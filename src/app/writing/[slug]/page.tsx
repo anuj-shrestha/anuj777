@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { essays } from "@/data/writing";
 import ExternalRedirect from "./ExternalRedirect";
@@ -5,6 +6,26 @@ import Link from "next/link";
 
 export function generateStaticParams() {
   return essays.map((e) => ({ slug: e.slug }));
+}
+
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const e = essays.find((x) => x.slug === params.slug);
+  if (!e) return {};
+  return {
+    title: e.title,
+    description: e.summary,
+    openGraph: {
+      title: `${e.title} | Anuj Shrestha`,
+      description: e.summary,
+      type: "article",
+      url: `https://anuj-shrestha.github.io/writing/${e.slug}`,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${e.title} | Anuj Shrestha`,
+      description: e.summary,
+    },
+  };
 }
 
 export default function EssayDetail({ params }: { params: { slug: string } }) {
@@ -17,8 +38,26 @@ export default function EssayDetail({ params }: { params: { slug: string } }) {
 
   const paras = (e.body ?? "").split(/\n\n+/);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": e.title,
+    "description": e.summary,
+    "datePublished": e.date,
+    "author": {
+      "@type": "Person",
+      "name": "Anuj Shrestha",
+      "url": "https://anuj-shrestha.github.io"
+    },
+    "url": e.url ?? `https://anuj-shrestha.github.io/writing/${e.slug}`
+  };
+
   return (
     <article>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Link href="/writing" className="text-sm text-ink-500 hover:text-terra-600 no-underline">
         ← All writing
       </Link>

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { profile } from "@/data/profile";
@@ -6,6 +7,14 @@ import { songs, channelUrl, channelName } from "@/data/songs";
 import { essays } from "@/data/writing";
 import ProjectCard from "@/components/ProjectCard";
 import SongRow from "@/components/SongRow";
+
+export const metadata: Metadata = {
+  title: {
+    absolute: "Anuj Shrestha — engineer, songwriter, maker",
+  },
+  description:
+    "Personal site of Anuj Shrestha. Lead engineer at Parewa Labs (Programiz). Creator of Visual Story Editor AI. Songwriter and Unity game maker based in Kathmandu.",
+};
 
 export default function Home() {
   const featured = featuredSlugs.map((s) => projects.find((p) => p.slug === s)!).filter(Boolean);
