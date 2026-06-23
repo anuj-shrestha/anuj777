@@ -1,7 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { songs, channelUrl, channelName } from "@/data/songs";
 import SongRow from "@/components/SongRow";
+
+const ThreeVinyl = dynamic(() => import("@/components/ThreeVinyl"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-[340px] rounded-2xl bg-cream-50 border border-cream-200 animate-pulse flex items-center justify-center font-mono text-xs text-ink-400">
+      Loading 3D Player...
+    </div>
+  ),
+});
 
 export const metadata: Metadata = {
   title: "Songs",
@@ -31,10 +41,15 @@ export default function SongsPage() {
         </div>
       </header>
 
-      <div className="border-t border-cream-300/60">
-        {shipped.map((s) => (
-          <SongRow key={s.title} s={s} />
-        ))}
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+        <div className="md:col-span-6 border-t border-cream-300/60">
+          {shipped.map((s) => (
+            <SongRow key={s.title} s={s} />
+          ))}
+        </div>
+        <div className="md:col-span-6 md:sticky md:top-6">
+          <ThreeVinyl />
+        </div>
       </div>
     </div>
   );

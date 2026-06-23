@@ -1,12 +1,22 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { profile } from "@/data/profile";
 import { projects, featuredSlugs } from "@/data/projects";
 import { songs, channelUrl, channelName } from "@/data/songs";
 import { essays } from "@/data/writing";
 import ProjectCard from "@/components/ProjectCard";
 import SongRow from "@/components/SongRow";
+
+const ThreeVinyl = dynamic(() => import("@/components/ThreeVinyl"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-[340px] rounded-2xl bg-cream-50 border border-cream-200 animate-pulse flex items-center justify-center font-mono text-xs text-ink-400">
+      Loading 3D Player...
+    </div>
+  ),
+});
 
 export const metadata: Metadata = {
   title: {
@@ -127,10 +137,15 @@ export default function Home() {
           12+ songs across Nepali, Hindi, and English. Bilingual storytelling is its own craft — I keep
           working at it. Most of the catalog lives on my YouTube channel.
         </p>
-        <div className="border-t border-cream-300/60">
-          {shipped.map((s) => (
-            <SongRow key={s.title} s={s} />
-          ))}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+          <div className="md:col-span-6 border-t border-cream-300/60">
+            {shipped.map((s) => (
+              <SongRow key={s.title} s={s} />
+            ))}
+          </div>
+          <div className="md:col-span-6 md:sticky md:top-6">
+            <ThreeVinyl />
+          </div>
         </div>
       </section>
 
